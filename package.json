@@ -1,0 +1,24 @@
+{
+  "name": "randr",
+  "version": "1.0.0",
+  "description": "api for ratings and reviews",
+  "main": "index.js",
+  "scripts": {
+    "server": "npx nodemon server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kirby-SDC/randr.git"
+  },
+  "author": "Maxwell Philip",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kirby-SDC/randr/issues"
+  },
+  "homepage": "https://github.com/Kirby-SDC/randr#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^2.0.20"
+  }
+}

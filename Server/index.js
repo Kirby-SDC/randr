@@ -8,7 +8,7 @@ const PORT = 3001;
 
 //create a route for the app
 app.get('/', (req, res)=>{
-  res.send('Hello World')
+  res.send('Server connected')
 });
 
 // make teh server listen ot requests
