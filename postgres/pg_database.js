@@ -8,9 +8,14 @@ const credentials = {
   port: 5432,
 };
 
-const client = new Client(credentials)
+const pool = new Pool(credentials)
 
-client.connect(function(err) {
-  if (err) throw err;
-  console.log("Connected!");
-});
+module.exports = {
+  query: (text, params, callback) => {
+    return pool.query(text, params, callback)
+  }
+}
+// pool.connect(function(err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+// });
