@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser')
-const db = require('../postgres/pg_database')
+const controllers = require('./controllers')
 
 //creates a new express app
 const app = express();
@@ -14,18 +14,31 @@ app.get('/', (req, res)=>{
   res.send('Server connected')
 });
 
-app.get('/reviews', (req, res, next) => {
-  console.log('connected')
-  db.query('SELECT * FROM reviews LIMIT 10', (err, result) => {
-    if (err) {
-      return next(err)
-    }
-    res.send(result)
-  })
-})
+app.get('/reviews', controllers.getReviews)
 
 // make the server listen to requests
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`)
 });
+
+
+// console.log('connected')
+// console.log(req.query)
+// db.query('SELECT * FROM reviews where product_id = $1', [req.query.product_id]).then(result => {
+//   // res.send(result.rows)
+//   let resObj = result.rows
+//   resObj.map(row => {
+//      db.query('SELECT url FROM photos WHERE review_id = $1', [row.id]).then(photos => {
+//       photos.rows.length > 0 ? row.photos = photos.rows : null;
+//       console.log(row.photos)
+//     }).catch(err => {
+//       console.log('error', err)
+//     })
+//   })
+//    res.send(resObj)
+//   // console.log(result.rows)
+// }).catch(err => {
+//   console.log('error', err)
+//   res.status(404)
+// })

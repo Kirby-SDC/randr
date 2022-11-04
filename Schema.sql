@@ -32,88 +32,96 @@
 
 -- GRANT ALL ON SCHEMA public TO pg_database_owner;
 
-DROP TABLE IF EXISTS public.reviews;
 
-CREATE TABLE IF NOT EXISTS public.reviews
+
+-- -- Table: characteristics
+
+DROP TABLE IF EXISTS characteristics;
+
+CREATE TABLE IF NOT EXISTS characteristics
 (
-    product_id integer NOT NULL,
-    review_id integer NOT NULL,
-    date date,
-    summary character varying COLLATE pg_catalog."default" NOT NULL,
-    body character varying COLLATE pg_catalog."default" NOT NULL,
-    recommend boolean,
-    reported boolean,
-    reviewer_name character varying COLLATE pg_catalog."default" NOT NULL,
-    reviewer_email character varying COLLATE pg_catalog."default" NOT NULL,
-    response character varying COLLATE pg_catalog."default",
-    helpfulness integer,
-    CONSTRAINT reviews_pkey PRIMARY KEY (review_id)
-)
-
-TABLESPACE pg_default;
-
-ALTER TABLE IF EXISTS public.reviews
-    OWNER to angelacarrasco;
-    -- imports review csv data into table
-copy public.reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM
- '/Users/angelacarrasco/Downloads/reviews.csv' DELIMITER ',' CSV HEADER QUOTE '\"' ESCAPE '''';
-
--- -- Table: public.characteristics
-
-DROP TABLE IF EXISTS public.characteristics;
-
-CREATE TABLE IF NOT EXISTS public.characteristics
-(
-    id integer,
+    id integer PRIMARY KEY UNIQUE,
     product_id integer,
-    name text COLLATE pg_catalog."default"
-)
+    name text
+);
 
-TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.characteristics
+ALTER TABLE IF EXISTS characteristics
     OWNER to angelacarrasco;
 -- imports characteristics csv data into table
-copy public.characteristics (id, product_id, name) FROM
+copy characteristics (id, product_id, name) FROM
  '/Users/angelacarrasco/Downloads/characteristics.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
--- Table: public.ratingschar
 
-DROP TABLE IF EXISTS public.ratingschar;
+-- Table: ratingschar
 
-CREATE TABLE IF NOT EXISTS public.ratingschar
+DROP TABLE IF EXISTS ratingschar;
+
+CREATE TABLE IF NOT EXISTS ratingschar
 (
-    id integer,
+    id serial PRIMARY KEY,
     characteristics_id integer,
     review_id integer,
     value integer
-)
+);
 
-TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.ratingschar
+ALTER TABLE IF EXISTS ratingschar
     OWNER to angelacarrasco;
 -- imports characteristic ratings csv data into table
 copy ratingschar (id, characteristics_id, review_id, value) FROM
  '/Users/angelacarrasco/Downloads/characteristic_reviews.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
 
 
--- -- Table: public.photos
+-- -- Table: photos
 
-DROP TABLE IF EXISTS public.photos;
+DROP TABLE IF EXISTS photos;
 
-CREATE TABLE IF NOT EXISTS public.photos
+CREATE TABLE IF NOT EXISTS photos
 (
-    id integer,
+    id integer PRIMARY KEY,
     review_id integer,
-    url text COLLATE pg_catalog."default"
-)
+    url text
+);
 
-TABLESPACE pg_default;
 
-ALTER TABLE IF EXISTS public.photos
+ALTER TABLE IF EXISTS photos
     OWNER to angelacarrasco;
 -- imports photos csv data into table
-copy public.photos (id, review_id, url) FROM
+copy photos (id, review_id, url) FROM
  '/Users/angelacarrasco/Downloads/reviews_photos.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
 
+DROP TABLE IF EXISTS reviews;
 
+CREATE TABLE IF NOT EXISTS reviews
+(
+    id serial NOT NULL PRIMARY KEY,
+    product_id integer,
+    rating integer,
+    summary text,
+    body text,
+    recommend boolean,
+    reported boolean,
+    reviewer_name text,
+    reviewer_email text,
+    response text,
+    helpfulness integer,
+    date text,
+    photos text[]
+);
+
+
+ALTER TABLE IF EXISTS reviews
+    OWNER to angelacarrasco;
+    -- imports review csv data into table
+copy reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM
+ '/Users/angelacarrasco/Downloads/reviews.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
+
+-- Add foreign keys
+ALTER TABLE ratingschar ADD FOREIGN KEY (characteristics_id) REFERENCES characteristics (id);
+ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES reviews (id);
+
+-- CREATE INDEX ON PRODUCT ID AND REVIEW_ID ON PHOTOS
+CREATE INDEX idx_reviews_product_id ON reviews(product_id);
+CREATE INDEX idx_photos_review_id ON photos(review_id);
+
+-- run this command to seed DB:   psql -U angelacarrasco -d Reviews < Schema.sql

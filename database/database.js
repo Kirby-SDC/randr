@@ -8,7 +8,6 @@ const credentials = {
   password: process.env.password,
   port: process.env.port,
 };
-
 const pool = new Pool(credentials)
 
 module.exports = {
