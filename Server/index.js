@@ -15,6 +15,13 @@ app.get('/', (req, res)=>{
 });
 
 app.get('/reviews', controllers.getReviews)
+app.get('/reviews/meta', controllers.getMetaData)
+
+app.post('/reviews', controllers.addReview)
+
+app.put('/reviews/:review_id/helpful', controllers.putHelpful)
+
+app.put('/reviews/:review_id/report', controllers.putReport)
 
 // make the server listen to requests
 

@@ -32,26 +32,6 @@
 
 -- GRANT ALL ON SCHEMA public TO pg_database_owner;
 
-
-
--- -- Table: characteristics
-
-DROP TABLE IF EXISTS characteristics;
-
-CREATE TABLE IF NOT EXISTS characteristics
-(
-    id integer PRIMARY KEY UNIQUE,
-    product_id integer,
-    name text
-);
-
-
-ALTER TABLE IF EXISTS characteristics
-    OWNER to angelacarrasco;
--- imports characteristics csv data into table
-copy characteristics (id, product_id, name) FROM
- '/Users/angelacarrasco/Downloads/characteristics.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
-
 -- Table: ratingschar
 
 DROP TABLE IF EXISTS ratingschar;
@@ -72,13 +52,33 @@ copy ratingschar (id, characteristics_id, review_id, value) FROM
  '/Users/angelacarrasco/Downloads/characteristic_reviews.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
 
 
+-- -- Table: characteristics
+
+DROP TABLE IF EXISTS characteristics;
+
+CREATE TABLE IF NOT EXISTS characteristics
+(
+    id integer PRIMARY KEY UNIQUE,
+    product_id integer,
+    name text
+);
+
+
+ALTER TABLE IF EXISTS characteristics
+    OWNER to angelacarrasco;
+-- imports characteristics csv data into table
+copy characteristics (id, product_id, name) FROM
+ '/Users/angelacarrasco/Downloads/characteristics.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
+
+
+
 -- -- Table: photos
 
 DROP TABLE IF EXISTS photos;
 
 CREATE TABLE IF NOT EXISTS photos
 (
-    id integer PRIMARY KEY,
+    id serial PRIMARY KEY,
     review_id integer,
     url text
 );
@@ -116,6 +116,12 @@ ALTER TABLE IF EXISTS reviews
 copy reviews (id, product_id, rating, date, summary, body, recommend, reported, reviewer_name, reviewer_email, response, helpfulness) FROM
  '/Users/angelacarrasco/Downloads/reviews.csv' DELIMITER ',' CSV HEADER QUOTE '"' ESCAPE '''';
 
+-- Deal with out of sync issue for PRI KEY
+SELECT setval('reviews_id_seq', max(id)) FROM reviews;
+SELECT setval('ratingschar_id_seq', max(id)) FROM ratingschar;
+-- SELECT setval('ratingschar_review_id_seq', max(review_id)) FROM ratingschar;
+SELECT setval('photos_id_seq', max(id)) FROM photos;
+
 -- Add foreign keys
 ALTER TABLE ratingschar ADD FOREIGN KEY (characteristics_id) REFERENCES characteristics (id);
 ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES reviews (id);
@@ -123,5 +129,8 @@ ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES reviews (id);
 -- CREATE INDEX ON PRODUCT ID AND REVIEW_ID ON PHOTOS
 CREATE INDEX idx_reviews_product_id ON reviews(product_id);
 CREATE INDEX idx_photos_review_id ON photos(review_id);
+CREATE INDEX idx_ratings_char_id ON ratingschar(characteristics_id);
+CREATE INDEX idx_char_name_id ON characteristics(id);
+CREATE INDEX idx_char_product_id ON characteristics(product_id);
 
 -- run this command to seed DB:   psql -U angelacarrasco -d Reviews < Schema.sql
