@@ -16,10 +16,13 @@ exports.addReview = (req, res) => {
       }).catch(err => {
         console.log('photo add error', err)
       })
-      req.body.characteristics.map(char => {
-        db.query(`INSERT INTO ratingschar (review_id, characteristics_id, value) values ($1, $2, $3)`, [data.rows[0].id, char.id, char.value]).then(data => {
+      for (characteristic in req.body.characteristics) {
+        db.query(`INSERT INTO ratingschar (review_id, characteristics_id, value) values ($1, $2, $3)`,
+         [data.rows[0].id, characteristic, req.body.characteristics.characteristic]).then(data => {
+        }).catch(err => {
+          console.log('error adding to ratingschar:', err)
         })
-      })
+      }
   }).catch(err => {
     console.log('ERROR:', err)
   })
@@ -50,7 +53,7 @@ exports.putReport = (req, res) => {
 // explain analyze for checking speeds
   // 'explain analyze <your query>'
 
-// Query Strings
+// Query Stringsnpm run
 const getReviewsQuery = `SELECT * FROM
   (SELECT a.id, a.rating, a.summary, a.recommend, a.response,
     a.body, a.date, a.reviewer_name, a.helpfulness, (select jsonb_agg(ph) FROM

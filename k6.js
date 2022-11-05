@@ -3,7 +3,7 @@ import { sleep, check, group } from 'k6';
 
 export const options = {
   vus: 50, // Virtual Users
-  duration: '5s'
+  duration: '1s'
 };
 
 var route = 'http://localhost:3000/reviews'
@@ -17,7 +17,7 @@ const postData = JSON.stringify({
   name: "postman with photos bb",
   email: "postman@gmail.com",
   photos: ["https://images.unsplash.com/photo-1560570803-7474c0f9af99?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=975&q=80"],
-  characteristics: [{"id": 2, "value": 2}]
+  characteristics: {"2": 2, "4": 3}
 })
 
 const params = {

@@ -128,6 +128,7 @@ ALTER TABLE photos ADD FOREIGN KEY (review_id) REFERENCES reviews (id);
 
 -- CREATE INDEX ON PRODUCT ID AND REVIEW_ID ON PHOTOS
 CREATE INDEX idx_reviews_product_id ON reviews(product_id);
+CREATE INDEX idx_reviews_review_id ON reviews(id);
 CREATE INDEX idx_photos_review_id ON photos(review_id);
 CREATE INDEX idx_ratings_char_id ON ratingschar(characteristics_id);
 CREATE INDEX idx_char_name_id ON characteristics(id);
