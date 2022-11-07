@@ -1,10 +1,8 @@
 const db = require('../database/database')
 
 exports.getReviews = (req, res) => {
-  let resObj = {product_id: req.query.product_id, page: req.query.page, count: req.query.count}
-  db.query(getReviewsQuery,[req.query.product_id, req.query.count, req.query.page]).then(result => {
-      resObj.results = result.rows
-      res.send(resObj)
+  db.query(getReviewsQuery, [req.query.product_id, req.query.count, req.query.page]).then(result => {
+      res.send(result.rows[0].reviews)
   })
 }
 
@@ -54,36 +52,87 @@ exports.putReport = (req, res) => {
   // 'explain analyze <your query>'
 
 // Query Stringsnpm run
-const getReviewsQuery = `SELECT * FROM
-  (SELECT a.id, a.rating, a.summary, a.recommend, a.response,
-    a.body, a.date, a.reviewer_name, a.helpfulness, (select jsonb_agg(ph) FROM
-    (SELECT url FROM photos WHERE review_id = a.id )ph ) AS photos
-  FROM reviews AS a WHERE product_id = $1 AND reported = false LIMIT $2 offset(cast($3 as integer) *  cast($2 as integer) - $2)
-  ) reviews;`
+// REMOVE THE CASTING FOR A.DATE AFTER RESEEDING THE DATABASE, IT WILL BE BIG INT BY DEFAULT
+const getReviewsQuery = `select json_build_object(
+  'product_id', cast($1 as integer),
+  'page', cast($3 as integer),
+  'count', cast($2 as integer),
+  'results',
+    (SELECT json_agg(reviews) FROM
+    (SELECT a.id, a.rating, a.summary, a.recommend, a.response,
+      a.body, TO_CHAR(TO_TIMESTAMP(a.date::bigint / 1000), 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), a.reviewer_name, a.helpfulness, (select jsonb_agg(ph) FROM
+      (SELECT url FROM photos WHERE review_id = a.id )ph ) AS photos
+    FROM reviews AS a WHERE product_id = 4 AND reported = false LIMIT $2 offset(cast($3 as integer) *  cast($2 as integer) - $2) )
+    reviews)
+    ) as reviews `
 
-const getMetaQuery = `SELECT jsonb_build_object
-  (
-    'product_id', cast($1 as integer),
-    'ratings',
-  (select jsonb_object_agg(rating, count) as details
-  from (
-  SELECT rating, COUNT(rating) FROM reviews WHERE product_id = 4 GROUP BY rating
-  ) as t),
-    'recommended',
-      (select jsonb_object_agg(recommend, count) as details
-      from (
-      select recommend, count(recommend) as count
-      from reviews where product_id = cast($1 as integer)
-      group by recommend
-      ) as t),
-    'characteristics',
-     (select jsonb_object_agg(name, json_build_object('id',the_id, 'rating',the_rating)) as chars
-  from (select name, AVG(value) as the_rating, ratingschar.characteristics_id as the_id from
-        ratingschar
-  inner join characteristics
-    on ratingschar.characteristics_id = characteristics.id
-  where product_id = cast($1 as integer)
-  GROUP BY name, ratingschar.id
-      ) as b
-     )
-  ) `
+
+
+const getMetaQuery = `SELECT
+jsonb_build_object(
+  'product_id'
+, $1::integer
+, 'ratings'
+, (
+    SELECT
+      jsonb_object_agg(rating, count) details
+    FROM
+      (
+        SELECT
+          rating
+        , count(rating)
+        FROM
+          reviews
+        WHERE
+          product_id = $1::integer
+        GROUP BY
+          rating
+      ) t
+  )
+, 'recommended'
+, (
+    SELECT
+      jsonb_object_agg(recommend, count) details
+    FROM
+      (
+        SELECT
+          recommend
+        , count(recommend) count
+        FROM
+          reviews
+        WHERE
+          product_id = $1::integer
+        GROUP BY
+          recommend
+      ) t
+  )
+, 'characteristics'
+, (
+    SELECT
+      jsonb_object_agg(
+        name
+      , json_build_object(
+          'id'
+        , id
+        , 'value'
+        , avg
+        )
+      ) chars
+    FROM
+      (
+        SELECT
+          c.name
+        , c.id
+        , avg(cr.value)
+        FROM
+          characteristics c
+        LEFT JOIN
+          ratingschar cr
+            ON c.id = cr.characteristics_id
+        WHERE
+          c.product_id = $1::integer
+        GROUP BY
+          c.id
+      ) b
+  )
+);`

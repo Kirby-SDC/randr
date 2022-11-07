@@ -3,7 +3,7 @@ import { sleep, check, group } from 'k6';
 
 export const options = {
   vus: 50, // Virtual Users
-  duration: '1s'
+  duration: '10s'
 };
 
 var route = 'http://localhost:3000/reviews'
@@ -26,7 +26,7 @@ const params = {
   },
 };
 
-const getReviews = `${route}/?product_id=${Math.floor(Math.random() * 10000) + 1}`;
+const getReviews = `${route}/?product_id=${Math.floor(Math.random() * 10000) + 1}&?page=1&?count=${Math.floor(Math.random() * 100) + 5}`;
 const getMetaData = `${route}/meta/?product_id=${Math.floor(Math.random() * 10000) + 1}`
 const putHelpful = `${route}/${Math.floor(Math.random() * 100000) + 1}/helpful`
 const putReport = `${route}/${Math.floor(Math.random() * 100000) + 1}/report`
@@ -65,46 +65,46 @@ export default function test() {
       'transaction time < 20s': (r) => r.timings.duration < 20000,
     });
   });
-  group('putHelpful', () => {
-    const putHelpfulResponse = http.put(putHelpful);
-    check(putHelpfulResponse, {
-      'transaction time < 10ms': (r) => r.timings.duration < 10,
-      'transaction time < 50ms': (r) => r.timings.duration < 50,
-      'transaction time < 200ms': (r) => r.timings.duration < 200,
-      'transaction time < 500ms': (r) => r.timings.duration < 500,
-      'transaction time < 1000ms': (r) => r.timings.duration < 1000,
-      'transaction time < 2000ms': (r) => r.timings.duration < 2000,
-      'transaction time < 5000ms': (r) => r.timings.duration < 5000,
-      'transaction time < 10s': (r) => r.timings.duration < 10000,
-      'transaction time < 20s': (r) => r.timings.duration < 20000,
-    });
-  });
-  group('putReported', () => {
-    const putReportResponse = http.put(putReport);
-    check(putReportResponse, {
-      'transaction time < 10ms': (r) => r.timings.duration < 10,
-      'transaction time < 50ms': (r) => r.timings.duration < 50,
-      'transaction time < 200ms': (r) => r.timings.duration < 200,
-      'transaction time < 500ms': (r) => r.timings.duration < 500,
-      'transaction time < 1000ms': (r) => r.timings.duration < 1000,
-      'transaction time < 2000ms': (r) => r.timings.duration < 2000,
-      'transaction time < 5000ms': (r) => r.timings.duration < 5000,
-      'transaction time < 10s': (r) => r.timings.duration < 10000,
-      'transaction time < 20s': (r) => r.timings.duration < 20000,
-    });
-  });
-  group('addReview', () => {
-    const addReviewResponse = http.post(route, postData, params);
-    check(addReviewResponse, {
-      'transaction time < 10ms': (r) => r.timings.duration < 10,
-      'transaction time < 50ms': (r) => r.timings.duration < 50,
-      'transaction time < 200ms': (r) => r.timings.duration < 200,
-      'transaction time < 500ms': (r) => r.timings.duration < 500,
-      'transaction time < 1000ms': (r) => r.timings.duration < 1000,
-      'transaction time < 2000ms': (r) => r.timings.duration < 2000,
-      'transaction time < 5000ms': (r) => r.timings.duration < 5000,
-      'transaction time < 10s': (r) => r.timings.duration < 10000,
-      'transaction time < 20s': (r) => r.timings.duration < 20000,
-    });
-  });
+  // group('putHelpful', () => {
+  //   const putHelpfulResponse = http.put(putHelpful);
+  //   check(putHelpfulResponse, {
+  //     'transaction time < 10ms': (r) => r.timings.duration < 10,
+  //     'transaction time < 50ms': (r) => r.timings.duration < 50,
+  //     'transaction time < 200ms': (r) => r.timings.duration < 200,
+  //     'transaction time < 500ms': (r) => r.timings.duration < 500,
+  //     'transaction time < 1000ms': (r) => r.timings.duration < 1000,
+  //     'transaction time < 2000ms': (r) => r.timings.duration < 2000,
+  //     'transaction time < 5000ms': (r) => r.timings.duration < 5000,
+  //     'transaction time < 10s': (r) => r.timings.duration < 10000,
+  //     'transaction time < 20s': (r) => r.timings.duration < 20000,
+  //   });
+  // });
+  // group('putReported', () => {
+  //   const putReportResponse = http.put(putReport);
+  //   check(putReportResponse, {
+  //     'transaction time < 10ms': (r) => r.timings.duration < 10,
+  //     'transaction time < 50ms': (r) => r.timings.duration < 50,
+  //     'transaction time < 200ms': (r) => r.timings.duration < 200,
+  //     'transaction time < 500ms': (r) => r.timings.duration < 500,
+  //     'transaction time < 1000ms': (r) => r.timings.duration < 1000,
+  //     'transaction time < 2000ms': (r) => r.timings.duration < 2000,
+  //     'transaction time < 5000ms': (r) => r.timings.duration < 5000,
+  //     'transaction time < 10s': (r) => r.timings.duration < 10000,
+  //     'transaction time < 20s': (r) => r.timings.duration < 20000,
+  //   });
+  // });
+  // group('addReview', () => {
+  //   const addReviewResponse = http.post(route, postData, params);
+  //   check(addReviewResponse, {
+  //     'transaction time < 10ms': (r) => r.timings.duration < 10,
+  //     'transaction time < 50ms': (r) => r.timings.duration < 50,
+  //     'transaction time < 200ms': (r) => r.timings.duration < 200,
+  //     'transaction time < 500ms': (r) => r.timings.duration < 500,
+  //     'transaction time < 1000ms': (r) => r.timings.duration < 1000,
+  //     'transaction time < 2000ms': (r) => r.timings.duration < 2000,
+  //     'transaction time < 5000ms': (r) => r.timings.duration < 5000,
+  //     'transaction time < 10s': (r) => r.timings.duration < 10000,
+  //     'transaction time < 20s': (r) => r.timings.duration < 20000,
+  //   });
+  // });
 }

@@ -3,34 +3,34 @@
 
 
 -- Database: Reviews
--- DROP DATABASE IF EXISTS "Reviews";
+DROP DATABASE IF EXISTS "Reviews";
 
--- CREATE DATABASE "Reviews"
---     WITH
---     OWNER = angelacarrasco
---     ENCODING = 'UTF8'
---     LC_COLLATE = 'C'
---     LC_CTYPE = 'C'
---     TABLESPACE = pg_default
---     CONNECTION LIMIT = -1
---     IS_TEMPLATE = False;
+CREATE DATABASE "Reviews"
+    WITH
+    OWNER = angelacarrasco
+    ENCODING = 'UTF8'
+    LC_COLLATE = 'C'
+    LC_CTYPE = 'C'
+    TABLESPACE = pg_default
+    CONNECTION LIMIT = -1
+    IS_TEMPLATE = False;
 
--- COMMENT ON DATABASE "Reviews"
---     IS 'Will house all of. thedata needed for the ratings and reviews API for Atelier';
+COMMENT ON DATABASE "Reviews"
+    IS 'Will house all of. thedata needed for the ratings and reviews API for Atelier';
 
--- -- SCHEMA: public
+-- SCHEMA: public
 
--- DROP SCHEMA IF EXISTS public ;
+DROP SCHEMA IF EXISTS public ;
 
--- CREATE SCHEMA IF NOT EXISTS public
---     AUTHORIZATION pg_database_owner;
+CREATE SCHEMA IF NOT EXISTS public
+    AUTHORIZATION pg_database_owner;
 
--- COMMENT ON SCHEMA public
---     IS 'standard public schema';
+COMMENT ON SCHEMA public
+    IS 'standard public schema';
 
--- GRANT USAGE ON SCHEMA public TO PUBLIC;
+GRANT USAGE ON SCHEMA public TO PUBLIC;
 
--- GRANT ALL ON SCHEMA public TO pg_database_owner;
+GRANT ALL ON SCHEMA public TO pg_database_owner;
 
 -- Table: ratingschar
 
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS reviews
     reviewer_email text,
     response text,
     helpfulness integer,
-    date text,
+    date bigint,
     photos text[]
 );
 
