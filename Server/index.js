@@ -17,6 +17,9 @@ app.post('/reviews', controllers.addReview)
 app.put('/reviews/:review_id/helpful', controllers.putHelpful)
 app.put('/reviews/:review_id/report', controllers.putReport)
 
+app.get("/loaderio-ede51e6f522ac08b0818b40ccf2eb4aa", (req, res) =>
+ res.send("loaderio-ede51e6f522ac08b0818b40ccf2eb4aa"))
+
 // make the server listen to requests
 
 app.listen(PORT, () => {

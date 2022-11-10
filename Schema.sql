@@ -119,7 +119,7 @@ copy reviews (id, product_id, rating, date, summary, body, recommend, reported, 
 -- Deal with out of sync issue for PRI KEY
 SELECT setval('reviews_id_seq', max(id)) FROM reviews;
 SELECT setval('ratingschar_id_seq', max(id)) FROM ratingschar;
--- SELECT setval('ratingschar_review_id_seq', max(review_id)) FROM ratingschar;
+-- SELECT setval('ratingschar_characteristics_id_seq', max(characteristics_id)) FROM ratingschar;
 SELECT setval('photos_id_seq', max(id)) FROM photos;
 
 -- Add foreign keys
@@ -133,5 +133,6 @@ CREATE INDEX idx_photos_review_id ON photos(review_id);
 CREATE INDEX idx_ratings_char_id ON ratingschar(characteristics_id);
 CREATE INDEX idx_char_name_id ON characteristics(id);
 CREATE INDEX idx_char_product_id ON characteristics(product_id);
+-- CREATE INDEX idx_reported_reviews_id ON reviews(reported);
 
 -- run this command to seed DB:   psql -U angelacarrasco -d Reviews < Schema.sql

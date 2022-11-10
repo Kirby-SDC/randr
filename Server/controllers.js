@@ -53,18 +53,52 @@ exports.putReport = (req, res) => {
 
 // Query Stringsnpm run
 // REMOVE THE CASTING FOR A.DATE AFTER RESEEDING THE DATABASE, IT WILL BE BIG INT BY DEFAULT
-const getReviewsQuery = `select json_build_object(
-  'product_id', cast($1 as integer),
-  'page', cast($3 as integer),
-  'count', cast($2 as integer),
-  'results',
-    (SELECT json_agg(reviews) FROM
-    (SELECT a.id, a.rating, a.summary, a.recommend, a.response,
-      a.body, TO_CHAR(TO_TIMESTAMP(a.date::bigint / 1000), 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), a.reviewer_name, a.helpfulness, (select jsonb_agg(ph) FROM
-      (SELECT url FROM photos WHERE review_id = a.id )ph ) AS photos
-    FROM reviews AS a WHERE product_id = 4 AND reported = false LIMIT $2 offset(cast($3 as integer) *  cast($2 as integer) - $2) )
-    reviews)
-    ) as reviews `
+const getReviewsQuery = `SELECT
+json_build_object(
+  'product_id'
+, $1::integer
+, 'page'
+, $3::integer
+, 'count'
+, $2::integer
+, 'results'
+, (
+    SELECT
+      json_agg(reviews)
+    FROM
+      (
+        SELECT
+          a.id
+        , a.rating
+        , a.summary
+        , a.recommend
+        , a.response
+        , a.body
+        , to_char(to_timestamp(a.date::bigint / 1000), 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
+        , a.reviewer_name
+        , a.helpfulness
+        , (
+            SELECT
+              jsonb_agg(ph)
+            FROM
+              (
+                SELECT
+                  url
+                FROM
+                  photos
+                WHERE
+                  review_id = a.id
+              ) ph
+          ) photos
+        FROM
+          reviews a
+        WHERE
+          product_id = $1::integer AND
+          reported = FALSE
+        LIMIT $2 OFFSET $3::integer * $2::integer - $2
+      ) reviews
+  )
+) reviews;`
 
 
 
