@@ -5,10 +5,6 @@
 
 Thie repository is for making a RESTful API using postgresql and express for the online retail portal of Atelier. The original API was unable to handle a large increase is users, and I decided to rebuild rather than refactor it. You can use this repo as a guide to make your own API. This guide assumes you have postgres already setup on your machine. You will not need PGadmin, but it can be helpful for writing your queries.
 
-- Setup
-- See HTML in the right
-- ✨Magic ✨
-
 ## Setup
 
 Install the dependencies
