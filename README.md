@@ -3,7 +3,7 @@
 
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
-Thie repository is for making a RESTful API using postgresql and express for the online retail portal of Atelier. The original API was unable to handle a large increase is users, and I decided to rebuild rather than refactor it. You can use this repo as a guide to make your own API. This guide assumes you have postgres already setup on your machine. You will not need PGadmin, but it can be helpful for writing your queries.
+Thie repository is for making a RESTful API using postgresql and express for the online retail portal of Atelier. The original API was unable to handle a large increase in users, and we decided to rebuild rather than refactor it. You can use this repo as a guide to make your own API. This guide assumes you have postgres already setup on your machine. You will not need PGadmin, but it can be helpful for writing your queries.
 
 ## Setup
 
@@ -19,7 +19,7 @@ database: <database name>
 password: <your password>
 port: 5432,
 ```
-Enter ou psql username and password as well as the name of your database. The default port for postgres is 5432 and the host will be localhost until you deploy the database. 
+Enter your psql username and password as well as the name of your database. The default port for postgres is 5432 and the host will be localhost until you deploy the database. 
 
 **Modify the Schema.sql file** 
     Use your own schema for creating the tables and change the copy commands to point towards your own csv files that you want to import into the database.
