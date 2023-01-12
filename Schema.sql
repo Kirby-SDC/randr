@@ -1,5 +1,4 @@
--- All of this SQL code is from pgadmin. I populated the db that way. May need to run it
--- here though when I make the docker container
+-- Most of this SQL code for db creation is from pgadmin. I populated the db that way initially but reseeding is much faster with a .sql file
 
 
 -- Database: Reviews
@@ -135,4 +134,6 @@ CREATE INDEX idx_char_name_id ON characteristics(id);
 CREATE INDEX idx_char_product_id ON characteristics(product_id);
 -- CREATE INDEX idx_reported_reviews_id ON reviews(reported);
 
--- run this command to seed DB:   psql -U angelacarrasco -d Reviews < Schema.sql
+
+
+-- run this command to seed/reseed DB:   psql -U angelacarrasco -d Reviews < Schema.sql
